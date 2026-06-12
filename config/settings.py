@@ -16,7 +16,6 @@ import dj_database_url
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -141,6 +140,12 @@ cloudinary.config(
     api_key="315135387228797",
     api_secret="K2p6d8wPsoAWwYx7aLsCn7St4Iw"
 )
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'ddiaijx11',
+    'API_KEY': '315135387228797',
+    'API_SECRET': 'K2p6d8wPsoAWwYx7aLsCn7St4Iw',
+}
 
 # Use Cloudinary for media storage
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
