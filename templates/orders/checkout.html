@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - NextCart</title>
+    <link rel="stylesheet" href="{% static 'css/orders/checkout.css' %}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Next<span>Cart</span></a>
+        <div class="nav-links">
+            <a href="{% url 'products:product_list' %}">Products</a>
+            <a href="{% url 'cart:cart' %}">🛒 Cart</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="page-title">Checkout</div>
+
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" id="checkoutForm">
+    {% csrf_token %}
+    <div class="checkout-layout">
+
+        <!-- LEFT: FORM -->
+        <div>
+
+            <!-- DELIVERY ADDRESS -->
+            <div class="form-card" style="margin-bottom:20px;">
+                <h3>Delivery Address</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="full_name" value="{{ form_data.full_name|default:user.full_name }}" placeholder="Apna poora naam" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="text" name="phone" value="{{ form_data.phone|default:'' }}" placeholder="10 digit number" required>
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label>Address Line 1 *</label>
+                    <input type="text" name="address_line1" value="{{ form_data.address_line1|default:'' }}" placeholder="House/Flat no., Street name" required>
+                </div>
+                <div class="form-group full">
+                    <label>Address Line 2</label>
+                    <input type="text" name="address_line2" value="{{ form_data.address_line2|default:'' }}" placeholder="Landmark, Area (optional)">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>City *</label>
+                        <input type="text" name="city" value="{{ form_data.city|default:'' }}" placeholder="City" required>
+                    </div>
+                    <div class="form-group">
+                        <label>State *</label>
+                        <input type="text" name="state" value="{{ form_data.state|default:'' }}" placeholder="State" required>
+                    </div>
+                </div>
+                <div class="form-group" style="max-width:200px;">
+                    <label>Pincode *</label>
+                    <input type="text" name="pincode" value="{{ form_data.pincode|default:'' }}" placeholder="6 digit pincode" required>
+                </div>
+            </div>
+
+            <!-- PAYMENT METHOD -->
+            <div class="form-card">
+                <h3>Payment Method</h3>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="cod" checked>
+                        <span class="pay-icon">💵</span>
+                        <div>
+                            <div class="pay-label">Cash on Delivery</div>
+                            <div class="pay-sub">Delivery pe cash do</div>
+                        </div>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="online">
+                        <span class="pay-icon">💳</span>
+                        <div>
+                            <div class="pay-label">Online Payment</div>
+                            <div class="pay-sub">UPI / Card / Net Banking</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: ORDER SUMMARY -->
+        <div class="summary">
+            <h3>Order Summary</h3>
+
+            <div class="summary-items">
+                {% for item in items %}
+                <div class="summary-item">
+                    <span class="item-name">{{ item.product.name }}</span>
+                    <span class="item-qty">x{{ item.quantity }}</span>
+                    <span class="item-price">₹{{ item.subtotal }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <hr class="summary-divider">
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <strong>₹{{ cart.total_price }}</strong>
+            </div>
+            <div class="summary-row">
+                <span>Delivery</span>
+                <strong style="color:var(--primary)">FREE</strong>
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>₹{{ cart.total_price }}</span>
+            </div>
+
+            <button type="submit" class="place-btn" id="placeBtn">
+                Place Order →
+            </button>
+        </div>
+
+    </div>
+    </form>
+</div>
+
+<script src="{% static 'js/orders/checkout.js' %}"></script>
+</body>
+</html>

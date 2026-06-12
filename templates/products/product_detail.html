@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - NextCart</title>
+    <link rel="stylesheet" href="{% static 'css/products/product_detail.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Next<span>Cart</span></a>
+        <div class="nav-links">
+            <a href="{% url 'products:product_list' %}">Products</a>
+            <a href="/cart/">🛒 Cart</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'accounts:logout' %}" class="nav-btn">Logout</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="nav-btn">Login</a>
+                <a href="{% url 'accounts:register' %}" class="nav-btn filled">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+    <a href="/">Home</a> ›
+    <a href="{% url 'products:product_list' %}">Products</a> ›
+    <a href="{% url 'products:product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a> ›
+    <span>{{ product.name }}</span>
+</div>
+
+<div class="container">
+
+    <!-- PRODUCT DETAIL -->
+    <div class="product-section">
+
+        <!-- IMAGE GALLERY -->
+        <div class="gallery">
+            <div class="main-img-wrap" id="mainImgWrap">
+                {% if primary_image %}
+                    <img src="{{ primary_image.image.url }}" alt="{{ product.name }}" id="mainImg">
+                {% else %}
+                    <div class="main-img-placeholder">🛒</div>
+                {% endif %}
+                {% if product.sale_price %}
+                    <div class="disc-badge">{{ product.discount_percentage }}% OFF</div>
+                {% endif %}
+            </div>
+
+            {% if images.count > 1 %}
+            <div class="thumbnails">
+                {% for img in images %}
+                <div class="thumb {% if img == primary_image %}active{% endif %}"
+                     onclick="changeImage('{{ img.image.url }}', this)">
+                    <img src="{{ img.image.url }}" alt="{{ product.name }}">
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- PRODUCT INFO -->
+        <div class="product-info">
+            <div class="product-cat">{{ product.category.name }}</div>
+            <h1 class="product-name">{{ product.name }}</h1>
+            <div class="product-sku">SKU: {{ product.sku }}</div>
+
+            <div class="price-block">
+                <span class="price-main">₹{{ product.effective_price }}</span>
+                {% if product.sale_price %}
+                    <span class="price-original">₹{{ product.price }}</span>
+                    <span class="price-save">{{ product.discount_percentage }}% OFF</span>
+                {% endif %}
+            </div>
+
+            {% if product.in_stock %}
+                <div class="stock-badge in-stock">✓ In Stock ({{ product.stock_quantity }} units)</div>
+            {% else %}
+                <div class="stock-badge out-stock">✗ Out of Stock</div>
+            {% endif %}
+
+            <hr class="divider">
+
+            {% if product.in_stock %}
+            <div class="qty-label">Quantity</div>
+            <div class="qty-wrap">
+                <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                <input type="number" class="qty-num" id="qty" value="1" min="1" max="{{ product.stock_quantity }}" readonly>
+                <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            {% endif %}
+
+            <div class="cta-row">
+                <button class="btn-cart" id="addCartBtn"
+                    {% if not product.in_stock %}disabled{% endif %}
+                    onclick="addToCart('{{ product.id }}')">
+                    🛒 {% if product.in_stock %}Add to Cart{% else %}Out of Stock{% endif %}
+                </button>
+                <button class="btn-wishlist" title="Wishlist">♡</button>
+            </div>
+
+            <div class="features">
+                <div class="feature-item"><span>⚡</span><span>10-min delivery</span></div>
+                <div class="feature-item"><span>🌱</span><span>Farm fresh quality</span></div>
+                <div class="feature-item"><span>↩️</span><span>Easy returns</span></div>
+                <div class="feature-item"><span>🔒</span><span>Secure payment</span></div>
+            </div>
+
+            {% if product.description %}
+            <hr class="divider">
+            <div class="desc-label">About this product</div>
+            <div class="desc-text">{{ product.description }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- RELATED PRODUCTS -->
+    {% if related_products %}
+    <div class="related-section">
+        <h2 class="section-title">Related Products</h2>
+        <div class="related-grid">
+            {% for rel in related_products %}
+            <a href="{% url 'products:product_detail' rel.slug %}" class="product-card">
+                <div class="img-wrap">
+                    {% with rel.images.all as imgs %}
+                        {% if imgs %}
+                            <img src="{{ imgs.0.image.url }}" alt="{{ rel.name }}">
+                        {% else %}
+                            <div class="img-placeholder">🛒</div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="card-body">
+                    <div class="card-cat">{{ rel.category.name }}</div>
+                    <div class="card-name">{{ rel.name }}</div>
+                    <div class="card-price">₹{{ rel.effective_price }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Cart mein add ho gaya!</div>
+
+<script>const CSRF = '{{ csrf_token }}';</script>
+<script src="{% static 'js/products/product_detail.js' %}"></script>
+
+</body>
+</html>

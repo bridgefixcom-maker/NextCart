@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - NextCart</title>
+    <link rel="stylesheet" href="{% static 'css/orders/order_history.css' %}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Next<span>Cart</span></a>
+        <div class="nav-links">
+            <a href="{% url 'products:product_list' %}">Products</a>
+            <a href="{% url 'cart:cart' %}">🛒 Cart</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="page-title">My Orders</div>
+
+    {% if orders %}
+        {% for order in orders %}
+        <a href="{% url 'orders:order_detail' order.id %}" class="order-card">
+
+            <div class="order-header">
+                <div class="order-meta">
+                    <span class="order-num">Order #{{ order.id }}</span>
+                    <span class="order-date">{{ order.created_at|date:"d M Y, h:i A" }}</span>
+                </div>
+                <span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span>
+            </div>
+
+            <div class="order-items-preview">
+                {% for item in order.items.all %}
+                <span class="item-chip">{{ item.product_name }} x{{ item.quantity }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="order-footer">
+                <div class="order-total">
+                    ₹{{ order.total_amount }}
+                    <span>· {{ order.get_payment_method_display }}</span>
+                </div>
+                <span class="view-btn">View Details →</span>
+            </div>
+
+        </a>
+        {% endfor %}
+
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <h2>Koi order nahi hai abhi tak</h2>
+            <p>Pehla order place karo!</p>
+            <a href="{% url 'products:product_list' %}" class="shop-btn">Shop Now →</a>
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order #{{ order.id }} - NextCart</title>
+    <link rel="stylesheet" href="{% static 'css/orders/order_detail.css' %}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Next<span>Cart</span></a>
+        <div class="nav-links">
+            <a href="{% url 'products:product_list' %}">Products</a>
+            <a href="{% url 'orders:order_history' %}">My Orders</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page">
+
+    <!-- SUCCESS BANNER -->
+    <div class="success-banner">
+        <div class="success-icon">✅</div>
+        <h2>Order Place Ho Gaya!</h2>
+        <p>Aapka order confirm ho gaya hai. Jald hi deliver hoga.</p>
+        <div class="order-id">Order ID: <strong>#{{ order.id }}</strong></div>
+    </div>
+
+    <!-- STATUS STEPS -->
+    <div class="status-steps">
+        <div class="step {% if order.status in 'pending,confirmed,shipped,delivered' %}active{% endif %}">
+            <div class="step-circle">📋</div>
+            <div class="step-label">Placed</div>
+        </div>
+        <div class="step {% if order.status in 'confirmed,shipped,delivered' %}active{% endif %}">
+            <div class="step-circle">✓</div>
+            <div class="step-label">Confirmed</div>
+        </div>
+        <div class="step {% if order.status in 'shipped,delivered' %}active{% endif %}">
+            <div class="step-circle">🚚</div>
+            <div class="step-label">Shipped</div>
+        </div>
+        <div class="step {% if order.status == 'delivered' %}active{% endif %}">
+            <div class="step-circle">🏠</div>
+            <div class="step-label">Delivered</div>
+        </div>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="card">
+        <h3>Order Items</h3>
+        <div class="order-items">
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <div>
+                    <span class="name">{{ item.product_name }}</span>
+                    <span class="qty">x{{ item.quantity }}</span>
+                </div>
+                <div class="price">₹{{ item.subtotal }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top:16px;">
+            <div class="total-row">
+                <span>Subtotal</span>
+                <span>₹{{ order.total_amount }}</span>
+            </div>
+            <div class="total-row">
+                <span>Delivery</span>
+                <span style="color:var(--primary)">FREE</span>
+            </div>
+            <div class="total-row grand">
+                <span>Total</span>
+                <span>₹{{ order.total_amount }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELIVERY ADDRESS -->
+    <div class="card">
+        <h3>Delivery Address</h3>
+        <div class="address-grid">
+            <div class="addr-field">
+                <label>Name</label>
+                <p>{{ order.full_name }}</p>
+            </div>
+            <div class="addr-field">
+                <label>Phone</label>
+                <p>{{ order.phone }}</p>
+            </div>
+            <div class="addr-field">
+                <label>Address</label>
+                <p>{{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}</p>
+            </div>
+            <div class="addr-field">
+                <label>City / State</label>
+                <p>{{ order.city }}, {{ order.state }} — {{ order.pincode }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT & STATUS -->
+    <div class="card">
+        <h3>Payment & Status</h3>
+        <div class="address-grid">
+            <div class="addr-field">
+                <label>Payment Method</label>
+                <p>{{ order.get_payment_method_display }}</p>
+            </div>
+            <div class="addr-field">
+                <label>Order Status</label>
+                <p><span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <a href="{% url 'products:product_list' %}" class="btn-primary">Continue Shopping</a>
+        <a href="{% url 'orders:order_history' %}" class="btn-outline">My Orders</a>
+    </div>
+
+</div>
+
+</body>
+</html>

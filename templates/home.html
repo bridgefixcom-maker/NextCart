@@ -1,0 +1,410 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NextCart - Fresh groceries delivered in minutes">
+    <title>NextCart - Fresh Groceries Delivered Fast</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Next<span>Cart</span></a>
+
+        <button class="location-btn">
+            <span>📍</span>
+            <div class="location-text">
+                <span class="location-label">Deliver to</span>
+                <span class="location-value">Select Location ▾</span>
+            </div>
+        </button>
+
+        <form class="nav-search" action="{% url 'products:product_list' %}" method="GET">
+            <span class="search-icon">🔍</span>
+            <input type="text" name="q" placeholder="Search groceries, fruits, vegetables...">
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+
+        <div class="nav-right">
+            {% if request.user.is_authenticated %}
+                <span style="font-size:14px;color:#555;font-weight:600;">Hi, {{ request.user.full_name|truncatechars:12 }}</span>
+                <a href="{% url 'accounts:logout' %}" class="nav-btn nav-btn-outline">Logout</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="nav-btn nav-btn-outline">Login</a>
+                <a href="{% url 'accounts:register' %}" class="nav-btn nav-btn-primary">Register</a>
+            {% endif %}
+            <a href="/cart/" class="cart-btn">
+                🛒
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
+        </div>
+
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <form action="{% url 'products:product_list' %}" method="GET" class="mobile-search">
+            <input type="text" name="q" placeholder="Search products...">
+            <button type="submit">🔍</button>
+        </form>
+        <a href="{% url 'products:product_list' %}">All Products</a>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">Login</a>
+            <a href="{% url 'accounts:register' %}">Register</a>
+        {% endif %}
+        <a href="/cart/">Cart 🛒</a>
+    </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-badge">⚡ 10-Minute Delivery</div>
+            <h1 class="hero-title">
+                Fresh Groceries<br>
+                <span>Delivered Fast</span>
+            </h1>
+            <p class="hero-subtitle">
+                Order fresh fruits, vegetables, dairy &amp; more.<br>
+                From farm to your doorstep in minutes.
+            </p>
+            <div class="hero-actions">
+                <a href="{% url 'products:product_list' %}" class="btn-primary">Shop Now →</a>
+                <a href="#categories" class="btn-ghost">Explore Categories</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-num">50K+</span>
+                    <span class="stat-label">Happy Customers</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-num">5000+</span>
+                    <span class="stat-label">Products</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-num">10 Min</span>
+                    <span class="stat-label">Avg Delivery</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-circle"></div>
+            <div class="floating-card fc1">
+                <span class="fc-icon">🥦</span>
+                <div><div class="fc-name">Fresh Broccoli</div><div class="fc-price">₹49</div></div>
+            </div>
+            <div class="floating-card fc2">
+                <span class="fc-icon">🍎</span>
+                <div><div class="fc-name">Red Apples</div><div class="fc-price">₹129</div></div>
+            </div>
+            <div class="floating-card fc3">
+                <span class="fc-icon">🥛</span>
+                <div><div class="fc-name">Fresh Milk</div><div class="fc-price">₹55</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CATEGORIES ===== -->
+<section class="sec sec-white" id="categories">
+    <div class="sec-inner">
+        <div class="sec-head">
+            <div>
+                <h2 class="sec-title">Shop by Category</h2>
+                <p class="sec-sub">Fresh products across all categories</p>
+            </div>
+            <a href="{% url 'products:product_list' %}" class="see-all">See All →</a>
+        </div>
+        <div class="cats-scroll">
+            <div class="cats-track">
+                <a href="{% url 'products:product_list' %}?category=fruits" class="cat-card">
+                    <div class="cat-icon" style="background:#FFF3E0">🍎</div>
+                    <span class="cat-name">Fruits</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=vegetables" class="cat-card">
+                    <div class="cat-icon" style="background:#E8F5E9">🥦</div>
+                    <span class="cat-name">Vegetables</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=dairy" class="cat-card">
+                    <div class="cat-icon" style="background:#E3F2FD">🥛</div>
+                    <span class="cat-name">Dairy</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=beverages" class="cat-card">
+                    <div class="cat-icon" style="background:#FBE9E7">🧃</div>
+                    <span class="cat-name">Beverages</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=snacks" class="cat-card">
+                    <div class="cat-icon" style="background:#FFF8E1">🍿</div>
+                    <span class="cat-name">Snacks</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=bakery" class="cat-card">
+                    <div class="cat-icon" style="background:#FCE4EC">🍞</div>
+                    <span class="cat-name">Bakery</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=frozen" class="cat-card">
+                    <div class="cat-icon" style="background:#E8EAF6">🧊</div>
+                    <span class="cat-name">Frozen</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=household" class="cat-card">
+                    <div class="cat-icon" style="background:#E0F2F1">🧹</div>
+                    <span class="cat-name">Household</span>
+                </a>
+                <a href="{% url 'products:product_list' %}?category=personal-care" class="cat-card">
+                    <div class="cat-icon" style="background:#F3E5F5">💆</div>
+                    <span class="cat-name">Personal Care</span>
+                </a>
+                {% for cat in categories %}
+                <a href="{% url 'products:product_list' %}?category={{ cat.slug }}" class="cat-card">
+                    <div class="cat-icon" style="background:#E8F9EF">🛍️</div>
+                    <span class="cat-name">{{ cat.name }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== POPULAR PRODUCTS ===== -->
+<section class="sec sec-gray">
+    <div class="sec-inner">
+        <div class="sec-head">
+            <div>
+                <h2 class="sec-title">Popular Products</h2>
+                <p class="sec-sub">Handpicked fresh items just for you</p>
+            </div>
+            <a href="{% url 'products:product_list' %}" class="see-all">View All →</a>
+        </div>
+
+        {% if featured_products %}
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <a href="{% url 'products:product_detail' product.slug %}" class="product-card">
+                <div class="product-img-wrap">
+                    {% with product.images.all as imgs %}
+                        {% if imgs %}
+                            <img src="{{ imgs.0.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <div class="product-img-placeholder">🛒</div>
+                        {% endif %}
+                    {% endwith %}
+                    {% if product.sale_price %}<div class="disc-badge">{{ product.discount_percentage }}% OFF</div>{% endif %}
+                    {% if not product.in_stock %}<div class="oos-overlay">Out of Stock</div>{% endif %}
+                </div>
+                <div class="product-info">
+                    <div class="product-cat">{{ product.category.name }}</div>
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-footer">
+                        <div>
+                            <div class="p-price">₹{{ product.effective_price }}</div>
+                            {% if product.sale_price %}<div class="p-mrp">₹{{ product.price }}</div>{% endif %}
+                        </div>
+                        {% if product.in_stock %}
+                        <button class="add-btn" onclick="addToCart(event, '{{ product.id }}')">+</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-box">
+            <p>Admin se products add karo to yahan dikhenge</p>
+            <a href="/admin/products/product/add/" class="btn-primary" style="display:inline-flex;margin-top:12px;">+ Add Products</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ===== DEALS ===== -->
+<section class="sec sec-white">
+    <div class="sec-inner">
+        <div class="sec-head">
+            <div>
+                <h2 class="sec-title">Today's Deals</h2>
+                <p class="sec-sub">Limited time offers — grab before they're gone</p>
+            </div>
+        </div>
+        <div class="deals-grid">
+            <div class="deal-card deal-green">
+                <div class="deal-text">
+                    <div class="deal-tag">Fresh Pick</div>
+                    <h3>Fresh Vegetables</h3>
+                    <p>Farm to doorstep in hours</p>
+                    <a href="{% url 'products:product_list' %}?category=vegetables" class="deal-btn">Shop Now</a>
+                </div>
+                <div class="deal-visual">🥬🥕🌽</div>
+            </div>
+            <div class="deal-card deal-yellow">
+                <div class="deal-text">
+                    <div class="deal-tag">Summer Sale</div>
+                    <h3>Up to 40% Off</h3>
+                    <p>On all fruits today</p>
+                    <a href="{% url 'products:product_list' %}?category=fruits" class="deal-btn">Grab Now</a>
+                </div>
+                <div class="deal-visual">🍉🍊🍋</div>
+            </div>
+            <div class="deal-card deal-blue">
+                <div class="deal-text">
+                    <div class="deal-tag">Buy 1 Get 1</div>
+                    <h3>Dairy Products</h3>
+                    <p>Double the goodness</p>
+                    <a href="{% url 'products:product_list' %}?category=dairy" class="deal-btn">Explore</a>
+                </div>
+                <div class="deal-visual">🧀🥚🥛</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== WHY NEXTCART ===== -->
+<section class="sec sec-gray">
+    <div class="sec-inner">
+        <div class="sec-head center">
+            <h2 class="sec-title">Why Choose NextCart?</h2>
+            <p class="sec-sub">We deliver more than just groceries</p>
+        </div>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">⚡</div>
+                <h3>10-Min Delivery</h3>
+                <p>Ultra-fast delivery from our dark stores near you</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🔒</div>
+                <h3>Secure Payment</h3>
+                <p>100% safe transactions with bank-grade encryption</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🌱</div>
+                <h3>Fresh Quality</h3>
+                <p>Sourced directly from farms, freshness guaranteed</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">↩️</div>
+                <h3>Easy Returns</h3>
+                <p>Not satisfied? Full refund, no questions asked</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== REVIEWS ===== -->
+<section class="sec sec-white">
+    <div class="sec-inner">
+        <div class="sec-head center">
+            <h2 class="sec-title">What Our Customers Say</h2>
+            <p class="sec-sub">Trusted by thousands of happy families</p>
+        </div>
+        <div class="reviews-wrap">
+            <div class="reviews-track" id="reviewsTrack">
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="review-text">"Amazing service! Got fresh vegetables in just 8 minutes. The quality is outstanding and prices are very competitive."</p>
+                    <div class="review-author">
+                        <div class="author-av">P</div>
+                        <div><div class="author-name">Priya Sharma</div><div class="author-city">Mumbai</div></div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="review-text">"Best grocery app I've used. Super smooth delivery, always on time and products are always fresh and great quality."</p>
+                    <div class="review-author">
+                        <div class="author-av">R</div>
+                        <div><div class="author-name">Rahul Verma</div><div class="author-city">Delhi</div></div>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="review-text">"NextCart changed how I shop. Super fast, great quality and customer support is excellent. Highly recommended!"</p>
+                    <div class="review-author">
+                        <div class="author-av">A</div>
+                        <div><div class="author-name">Anita Patel</div><div class="author-city">Bangalore</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slider-dots">
+            <button class="dot active" onclick="goToReview(0)"></button>
+            <button class="dot" onclick="goToReview(1)"></button>
+            <button class="dot" onclick="goToReview(2)"></button>
+        </div>
+    </div>
+</section>
+
+<!-- ===== APP CTA ===== -->
+<section class="sec sec-gray">
+    <div class="sec-inner">
+        <div class="app-card">
+            <div class="app-text">
+                <h2>Get the NextCart App</h2>
+                <p>Order groceries on the go. Faster, easier, smarter.</p>
+                <div class="app-badges">
+                    <a href="#" class="app-badge">
+                        <span>🍎</span>
+                        <div><div class="badge-sub">Download on the</div><div class="badge-main">App Store</div></div>
+                    </a>
+                    <a href="#" class="app-badge">
+                        <span>▶</span>
+                        <div><div class="badge-sub">Get it on</div><div class="badge-main">Google Play</div></div>
+                    </a>
+                </div>
+            </div>
+            <div class="app-visual">📱</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="/" class="footer-logo">Next<span>Cart</span></a>
+            <p>Fresh groceries delivered to your doorstep in minutes. Quality you can trust.</p>
+            <div class="socials">
+                <a href="#" class="s-btn">f</a>
+                <a href="#" class="s-btn">in</a>
+                <a href="#" class="s-btn">tw</a>
+                <a href="#" class="s-btn">yt</a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <a href="#">About Us</a>
+            <a href="#">Careers</a>
+            <a href="#">Blog</a>
+            <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+            <h4>Support</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Track Order</a>
+            <a href="#">Return Policy</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <a href="#">📧 hello@nextcart.in</a>
+            <a href="#">📞 1800-123-4567</a>
+            <a href="#">📍 Mumbai, India</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 NextCart. All rights reserved. Made with ❤️ in India.</p>
+    </div>
+</footer>
+
+<script src="{% static 'js/home.js' %}"></script>
+</body>
+</html>

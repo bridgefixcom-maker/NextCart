@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - NextCart</title>
+    <link rel="stylesheet" href="{% static 'css/products/product_list.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="/" class="logo">Next<span>Cart</span></a>
+    <div class="nav-links">
+        <a href="{% url 'products:product_list' %}">Products</a>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">Login</a>
+            <a href="{% url 'accounts:register' %}">Register</a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- SEARCH -->
+<div class="search-bar">
+    <form method="GET" style="display:flex;flex:1;gap:12px;">
+        {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category.slug }}">
+        {% endif %}
+        <input type="text" name="q" value="{{ query }}" placeholder="Search products...">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h3>Categories</h3>
+        <ul class="category-list">
+            <li>
+                <a href="{% url 'products:product_list' %}"
+                   class="{% if not selected_category %}active{% endif %}">
+                   All Products
+                </a>
+            </li>
+            {% for cat in categories %}
+            <li>
+                <a href="{% url 'products:product_list' %}?category={{ cat.slug }}"
+                   class="{% if selected_category.slug == cat.slug %}active{% endif %}">
+                   {{ cat.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="main">
+        <div class="results-info" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <span>
+                {% if query %}
+                    "{{ query }}" ke liye {{ products.paginator.count }} result{{ products.paginator.count|pluralize }}
+                {% else %}
+                    {{ products.paginator.count }} product{{ products.paginator.count|pluralize }} available
+                {% endif %}
+            </span>
+            <form method="GET" style="display:flex;align-items:center;gap:8px;">
+                {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}">{% endif %}
+                <label style="font-size:13px;font-weight:600;color:#555;">Sort:</label>
+                <select name="sort" onchange="this.form.submit()"
+                    style="height:36px;padding:0 10px;border:1.5px solid #ddd;border-radius:9px;font-size:13px;font-weight:600;outline:none;cursor:pointer;">
+                    <option value="name"       {% if sort == 'name' %}selected{% endif %}>Name A-Z</option>
+                    <option value="price_asc"  {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="newest"     {% if sort == 'newest' %}selected{% endif %}>Newest First</option>
+                </select>
+            </form>
+        </div>
+
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <a href="{% url 'products:product_detail' product.slug %}"
+               class="product-card {% if not product.in_stock %}out-of-stock{% endif %}">
+
+                {% with product.images.all as imgs %}
+                    {% if imgs %}
+                        <img src="{{ imgs.0.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="no-image">No Image</div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="card-body">
+                    <div class="category-tag">{{ product.category.name }}</div>
+                    <div class="name">{{ product.name }}</div>
+                    <div class="price-row">
+                        <span class="price">₹{{ product.effective_price }}</span>
+                        {% if product.sale_price %}
+                            <span class="original-price">₹{{ product.price }}</span>
+                            <span class="badge">{{ product.discount_percentage }}% OFF</span>
+                        {% endif %}
+                    </div>
+                    {% if not product.in_stock %}
+                        <div style="font-size:12px;color:#e53935;margin-top:6px;font-weight:700;">Out of Stock</div>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <h3>Koi product nahi mila</h3>
+            <p>Search ya category change karo</p>
+        </div>
+        {% endif %}
+
+        <!-- PAGINATION -->
+        {% if products.paginator.num_pages > 1 %}
+        <div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-top:36px;flex-wrap:wrap;">
+            {% if products.has_previous %}
+            <a href="?page={{ products.previous_page_number }}&sort={{ sort }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+               style="height:38px;padding:0 16px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-weight:700;display:flex;align-items:center;color:#555;text-decoration:none;transition:.2s;"
+               onmouseover="this.style.borderColor='#08B64C';this.style.color='#08B64C'"
+               onmouseout="this.style.borderColor='#ddd';this.style.color='#555'">← Prev</a>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+                {% if products.number == num %}
+                <span style="height:38px;width:38px;background:#08B64C;color:#fff;border-radius:10px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;">{{ num }}</span>
+                {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                <a href="?page={{ num }}&sort={{ sort }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+                   style="height:38px;width:38px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#555;text-decoration:none;transition:.2s;"
+                   onmouseover="this.style.borderColor='#08B64C';this.style.color='#08B64C'"
+                   onmouseout="this.style.borderColor='#ddd';this.style.color='#555'">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}&sort={{ sort }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
+               style="height:38px;padding:0 16px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-weight:700;display:flex;align-items:center;color:#555;text-decoration:none;transition:.2s;"
+               onmouseover="this.style.borderColor='#08B64C';this.style.color='#08B64C'"
+               onmouseout="this.style.borderColor='#ddd';this.style.color='#555'">Next →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

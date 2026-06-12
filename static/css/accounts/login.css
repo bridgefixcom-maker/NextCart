@@ -1,0 +1,82 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
+                url("https://images.unsplash.com/photo-1542838132-92c53300491e");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.card {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 90px rgba(0,0,0,.25);
+}
+
+.content { padding: 38px 38px 38px; padding-top: 48px; overflow-y: auto; flex: 1; }
+
+.logo {
+    width: 76px; height: 76px;
+    margin: auto; margin-bottom: 19px;
+    border-radius: 20px;
+    background: #ffd633;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900;
+}
+.logo span { color: #00a63f; }
+
+.heading { text-align: center; font-size: 34px; font-weight: 900; margin-bottom: 8px; }
+.sub { text-align: center; color: #666; margin-bottom: 28px; }
+
+.form-group { margin-bottom: 14px; }
+label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 15px; }
+
+input {
+    width: 100%; height: 46px; padding: 12px;
+    border: 1px solid #ddd; border-radius: 12px;
+    outline: none; font-size: 15px;
+}
+input:focus { border-color: #00b853; box-shadow: 0 0 0 4px rgba(0,184,83,.08); }
+
+.error { color: red; margin-top: 6px; font-size: 13px; }
+
+button {
+    width: 100%; height: 46px; border: none;
+    border-radius: 12px; background: #08b64c;
+    color: white; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: .2s;
+}
+button:hover { background: #02953c; }
+
+.message { padding: 12px; border-radius: 12px; margin-bottom: 16px; background: #f3fff6; color: #0a8f41; }
+.message.error { background: #fff3f3; color: #cc0000; }
+
+.bottom { margin-top: 20px; text-align: center; color: #666; }
+.bottom a { text-decoration: none; color: #00a63f; font-weight: 700; }
+
+.policy { padding: 18px; background: #fafafa; text-align: center; font-size: 13px; color: #777; }
+
+@media(max-width: 768px) {
+    .card { max-width: 420px; }
+    .content { padding: 28px; }
+    .heading { font-size: 28px; }
+}
+@media(max-width: 480px) {
+    body { padding: 10px; }
+    .card { border-radius: 18px; }
+    .content { padding: 20px; }
+    .heading { font-size: 22px; }
+    .logo { width: 62px; height: 62px; font-size: 20px; }
+}

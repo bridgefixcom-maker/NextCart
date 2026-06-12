@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart - NextCart</title>
+    <link rel="stylesheet" href="{% static 'css/cart/cart.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Next<span>Cart</span></a>
+        <div class="nav-links">
+            <a href="{% url 'products:product_list' %}">Products</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="page-title">
+        🛒 My Cart
+        {% if items %}
+            <span>({{ cart.total_items }} item{{ cart.total_items|pluralize }})</span>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background:var(--primary-light);color:var(--primary);padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:600;font-size:14px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="cart-layout">
+
+        {% if items %}
+
+        <!-- CART ITEMS -->
+        <div class="cart-items" id="cartItems">
+            {% for item in items %}
+            <div class="cart-item" id="item-{{ item.id }}">
+
+                <!-- Image -->
+                <div class="item-img">
+                    {% with item.product.images.all as imgs %}
+                        {% if imgs %}
+                            <img src="{{ imgs.0.image.url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="item-img-placeholder">🛒</div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Details -->
+                <div class="item-details">
+                    <div class="item-cat">{{ item.product.category.name }}</div>
+                    <div class="item-name">{{ item.product.name }}</div>
+                    <div class="item-price">₹{{ item.product.effective_price }} <span style="color:var(--text-light)">per unit</span></div>
+                </div>
+
+                <!-- Controls -->
+                <div class="item-controls">
+                    <div class="qty-wrap">
+                        <button class="qty-btn" onclick="updateQty({{ item.id }}, {{ item.quantity }}, -1)">−</button>
+                        <input type="number" class="qty-num" id="qty-{{ item.id }}" value="{{ item.quantity }}" min="1" max="{{ item.product.stock_quantity }}" readonly>
+                        <button class="qty-btn" onclick="updateQty({{ item.id }}, {{ item.quantity }}, 1)">+</button>
+                    </div>
+
+                    <div class="item-subtotal" id="subtotal-{{ item.id }}">₹{{ item.subtotal }}</div>
+
+                    <button class="remove-btn" onclick="removeItem({{ item.id }})" title="Remove">✕</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="summary">
+            <h3>Order Summary</h3>
+
+            <div class="summary-row">
+                <span>Subtotal ({{ cart.total_items }} items)</span>
+                <strong id="summarySubtotal">₹{{ cart.total_price }}</strong>
+            </div>
+            <div class="summary-row">
+                <span>Delivery</span>
+                <strong style="color:var(--primary)">FREE</strong>
+            </div>
+            <div class="summary-row">
+                <span>Discount</span>
+                <strong style="color:#e53935">−₹0</strong>
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span id="summaryTotal">₹{{ cart.total_price }}</span>
+            </div>
+
+            <div class="promo-wrap">
+                <input type="text" class="promo-input" placeholder="Promo code">
+                <button class="promo-btn">Apply</button>
+            </div>
+
+            <button class="checkout-btn" onclick="window.location.href='/orders/checkout/'">
+                Proceed to Checkout →
+            </button>
+            <a href="{% url 'products:product_list' %}" class="continue-btn">← Continue Shopping</a>
+
+            <div class="safe-badges">
+                <div class="safe-badge">🔒 Secure</div>
+                <div class="safe-badge">⚡ Fast</div>
+                <div class="safe-badge">↩️ Easy Return</div>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- EMPTY CART -->
+        <div class="empty-cart">
+            <div class="empty-icon">🛒</div>
+            <h2>Cart khali hai!</h2>
+            <p>Koi product add nahi kiya abhi tak</p>
+            <a href="{% url 'products:product_list' %}" class="shop-btn">Shop Now →</a>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+<script>const CSRF = '{{ csrf_token }}';</script>
+<script src="{% static 'js/cart/cart.js' %}"></script>
+
+</body>
+</html>

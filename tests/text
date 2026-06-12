@@ -1,0 +1,8 @@
+
+             Models	Views Forms	Admin URLs Templates
+accounts	   ✅	✅	✅	✅	✅	✅
+products	   ✅	✅	❌	✅	✅   ✅
+cart	       ❌	❌	❌	❌	❌	❌
+orders	       ❌	❌	❌	❌	❌	❌
+payments	   ❌	❌	❌	❌	❌	❌
+vendors	       ❌	❌	❌	❌	❌	❌ 
