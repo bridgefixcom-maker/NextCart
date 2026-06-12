@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Django Apps
-
+    # Cloudinary
+    'cloudinary',
+    'cloudinary_storage',
     # Local Apps
     'apps.accounts',
     'apps.vendors',
@@ -51,7 +52,7 @@ INSTALLED_APPS = [
     'apps.cart',
     'apps.orders',
     'apps.payments',
- ]
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -135,16 +136,20 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', 'ddiaijx11')
+CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY', '315135387228797')
+CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET', 'K2p6d8wPsoAWwYx7aLsCn7St4Iw')
+
 cloudinary.config(
-    cloud_name="ddiaijx11",
-    api_key="315135387228797",
-    api_secret="K2p6d8wPsoAWwYx7aLsCn7St4Iw"
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
 )
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'ddiaijx11',
-    'API_KEY': '315135387228797',
-    'API_SECRET': 'K2p6d8wPsoAWwYx7aLsCn7St4Iw',
+    'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+    'API_KEY': CLOUDINARY_API_KEY,
+    'API_SECRET': CLOUDINARY_API_SECRET,
 }
 
 # Use Cloudinary for media storage
